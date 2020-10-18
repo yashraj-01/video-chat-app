@@ -28,4 +28,25 @@
         android:text="Sign Out"
         android:layout_alignParentBottom="true"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/signOutButton"
+        android:layout_marginHorizontal="20dp">
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/createRoomFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Create a room"
+            android:layout_alignParentStart="true"/>
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/joinRoomFAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Join a room"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
 </RelativeLayout>

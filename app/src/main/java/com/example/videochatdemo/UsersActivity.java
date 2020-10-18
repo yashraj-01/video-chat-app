@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
@@ -31,6 +32,7 @@ import java.util.List;
 public class UsersActivity extends AppCompatActivity {
 
     Button signOutButton;
+    ExtendedFloatingActionButton createRoomFab, joinRoomFab;
     ListView usersListView;
 
     ArrayAdapter<String> adapter;
@@ -40,6 +42,8 @@ public class UsersActivity extends AppCompatActivity {
     FirebaseFirestore database;
 
     private static final int PERMISSION_REQ_ID = 22;
+
+    private String ACTION = "";
 
     private boolean checkPermissionForCameraAndMicrophone() {
         int resultCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
@@ -59,6 +63,8 @@ public class UsersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_users);
 
         signOutButton = findViewById(R.id.signOutButton);
+        createRoomFab = findViewById(R.id.createRoomFAB);
+        joinRoomFab = findViewById(R.id.joinRoomFAB);
         usersListView = findViewById(R.id.usersListView);
 
         mAuth = FirebaseAuth.getInstance();
@@ -93,19 +99,28 @@ public class UsersActivity extends AppCompatActivity {
                     adapter.notifyDataSetChanged();
                 }else{
                     Toast.makeText(UsersActivity.this, "Error fetching users", Toast.LENGTH_SHORT).show();
-                    Log.i("Error geeting documents",task.getException().getMessage());
+                    Log.i("Error getting documents",task.getException().getMessage());
                 }
             }
         });
 
-        usersListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        createRoomFab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!checkPermissionForCameraAndMicrophone()) {
-                    requestPermissionForCameraAndMicrophone();
-                } else {
-                    startActivity(new Intent(UsersActivity.this, CallActivity.class));
-                }
+            public void onClick(View v) {
+                ACTION = "CREATE";
+                Intent intent = new Intent(UsersActivity.this, RoomActivity.class);
+                intent.putExtra("ACTION", ACTION);
+                startActivity(intent);
+            }
+        });
+
+        joinRoomFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ACTION = "JOIN";
+                Intent intent = new Intent(UsersActivity.this, RoomActivity.class);
+                intent.putExtra("ACTION", ACTION);
+                startActivity(intent);
             }
         });
 
