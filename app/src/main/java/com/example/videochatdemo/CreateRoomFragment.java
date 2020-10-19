@@ -16,15 +16,20 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreSettings;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.example.videochatdemo.media.RtcTokenBuilder;
 import com.example.videochatdemo.media.RtcTokenBuilder.Role;
@@ -67,11 +72,11 @@ public class CreateRoomFragment extends Fragment {
         return fragment;
     }
 
-    private static String appId = "15b44db1bf054b1f8fc3d4450967cdf3";
-    private static String appCertificate = "2849332911cc47128c9067ca9cbf4105";
+    private static final String appId = "15b44db1bf054b1f8fc3d4450967cdf3";
+    private static final String appCertificate = "2849332911cc47128c9067ca9cbf4105";
     private static String channelName = "";
-    private static int uid = 0;
-    private static int expirationTimeInSeconds = 3600;
+    private static final int uid = 0;
+    private static final int expirationTimeInSeconds = 3600;
 
     private int lastSelectedPosition = -1;
     View lastSelectedView = null;
@@ -177,6 +182,30 @@ public class CreateRoomFragment extends Fragment {
                     String result = token.buildTokenWithUid(appId, appCertificate,
                             channelName, uid, Role.Role_Publisher, timestamp);
                     Log.i("Token", result);
+
+                    String[] participants = channelName.split("_", 2);
+
+                    Map<String, Object> roomMap = new HashMap<>();
+                    roomMap.put("channelName", channelName);
+                    roomMap.put("host", participants[0]);
+                    roomMap.put("participant", participants[1]);
+                    roomMap.put("token", result);
+                    roomMap.put("expireTime", (long) (System.currentTimeMillis() + 8.64e+7));
+                    DocumentReference roomDocument = database.collection("rooms").document(channelName);
+                    roomDocument.set(roomMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(getActivity(), "Room created successfully", Toast.LENGTH_SHORT).show();
+                            getActivity().finish();
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(getActivity(), "Couldn't create room. Try again", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else{
+                    Toast.makeText(getActivity(), "Select a participant.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
