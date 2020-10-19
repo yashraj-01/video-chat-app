@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -26,6 +25,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.example.videochatdemo.media.RtcTokenBuilder;
+import com.example.videochatdemo.media.RtcTokenBuilder.Role;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -103,8 +105,6 @@ public class CreateRoomFragment extends Fragment {
                 .build();
         database.setFirestoreSettings(settings);
         // [END set_firestore_settings]
-
-        channelName = mAuth.getCurrentUser().getUid();
     }
 
     @Override
@@ -153,6 +153,12 @@ public class CreateRoomFragment extends Fragment {
 
                 view.setBackgroundColor(user.isSelected() ? Color.LTGRAY : Color.WHITE);
 
+                if (lastSelectedView == view){
+                    channelName = "";
+                } else{
+                    channelName = mAuth.getCurrentUser().getUid() + "_" + user.getUid();
+                }
+
                 lastSelectedPosition = position;
                 lastSelectedView = view;
 
@@ -163,12 +169,14 @@ public class CreateRoomFragment extends Fragment {
         createRoom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                for (User user : users){
-                    if (user.isSelected()){
-                        Log.i("Users Selected",user.getName() + " : " + user.getUid());
-                    } else{
-                        Log.i("Users Selected",Boolean.toString(user.isSelected()));
-                    }
+                Log.i("channelName", channelName);
+                if (!channelName.isEmpty()){
+                    RtcTokenBuilder token = new RtcTokenBuilder();
+                    int timestamp = (int)(System.currentTimeMillis() / 1000 + expirationTimeInSeconds);
+
+                    String result = token.buildTokenWithUid(appId, appCertificate,
+                            channelName, uid, Role.Role_Publisher, timestamp);
+                    Log.i("Token", result);
                 }
             }
         });
