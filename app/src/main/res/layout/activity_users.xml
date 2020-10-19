@@ -6,11 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".UsersActivity">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rooms created by you"
+        android:textStyle="italic"
+        android:textSize="16sp"
+        android:layout_margin="10dp"/>
+
     <ListView
-        android:id="@+id/usersListView"
+        android:id="@+id/roomsListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
+        android:layout_below="@+id/textView"
         android:layout_above="@+id/signOutButton"/>
 
     <Button

@@ -190,7 +190,7 @@ public class CreateRoomFragment extends Fragment {
                     roomMap.put("host", participants[0]);
                     roomMap.put("participant", participants[1]);
                     roomMap.put("token", result);
-                    roomMap.put("expireTime", (long) (System.currentTimeMillis() + 8.64e+7));
+                    roomMap.put("expireTime", (long) (System.currentTimeMillis() + 3.6e+6));
                     DocumentReference roomDocument = database.collection("rooms").document(channelName);
                     roomDocument.set(roomMap).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override

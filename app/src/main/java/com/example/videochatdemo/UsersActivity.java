@@ -9,6 +9,7 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,10 +34,11 @@ public class UsersActivity extends AppCompatActivity {
 
     Button signOutButton;
     ExtendedFloatingActionButton createRoomFab, joinRoomFab;
-    ListView usersListView;
+    ListView roomsListView;
 
     ArrayAdapter<String> adapter;
-    List<String> users;
+    List<String> rooms;
+    List<String> tokens;
 
     FirebaseAuth mAuth;
     FirebaseFirestore database;
@@ -65,7 +67,7 @@ public class UsersActivity extends AppCompatActivity {
         signOutButton = findViewById(R.id.signOutButton);
         createRoomFab = findViewById(R.id.createRoomFAB);
         joinRoomFab = findViewById(R.id.joinRoomFAB);
-        usersListView = findViewById(R.id.usersListView);
+        roomsListView = findViewById(R.id.roomsListView);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -80,27 +82,19 @@ public class UsersActivity extends AppCompatActivity {
         database.setFirestoreSettings(settings);
         // [END set_firestore_settings]
 
-        users = new ArrayList<>();
+        rooms = new ArrayList<>();
+        tokens = new ArrayList<>();
 
-        adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,users);
-        usersListView.setAdapter(adapter);
+        adapter = new ArrayAdapter(this,android.R.layout.simple_list_item_1,rooms);
+        roomsListView.setAdapter(adapter);
 
-        database.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        roomsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()){
-                        if (!documentSnapshot.getId().equals(FirebaseAuth.getInstance().getCurrentUser().getUid())){
-                            users.add(documentSnapshot.get("name").toString());
-                            Log.i("name",documentSnapshot.get("name").toString());
-                            Log.i("document",documentSnapshot.getId());
-                        }
-                    }
-                    adapter.notifyDataSetChanged();
-                }else{
-                    Toast.makeText(UsersActivity.this, "Error fetching users", Toast.LENGTH_SHORT).show();
-                    Log.i("Error getting documents",task.getException().getMessage());
-                }
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(UsersActivity.this, CallActivity.class);
+                intent.putExtra("channelName", rooms.get(position));
+                intent.putExtra("token", tokens.get(position));
+                startActivity(intent);
             }
         });
 
@@ -138,6 +132,31 @@ public class UsersActivity extends AppCompatActivity {
                 mAuth.signOut();
                 startActivity(new Intent(UsersActivity.this, MainActivity.class));
                 finish();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        database.collection("rooms").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    rooms.clear();
+                    tokens.clear();
+                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()){
+                        if (documentSnapshot.get("host").toString().equals(mAuth.getCurrentUser().getUid()) && Long.parseLong(documentSnapshot.get("expireTime").toString()) > System.currentTimeMillis()){
+                            rooms.add(documentSnapshot.getId());
+                            tokens.add(documentSnapshot.get("token").toString());
+                        }
+                    }
+                    adapter.notifyDataSetChanged();
+                }else{
+                    Toast.makeText(UsersActivity.this, "Error fetching rooms", Toast.LENGTH_SHORT).show();
+                    Log.i("Error getting documents",task.getException().getMessage());
+                }
             }
         });
     }

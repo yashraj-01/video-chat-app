@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".JoinRoomFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select the room you want to join"
+        android:layout_margin="10dp"/>
+
+    <ListView
+        android:id="@+id/rooms"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Join Room Fragment" />
+        android:layout_below="@+id/textView"
+        android:layout_marginTop="10dp"/>
 
-</FrameLayout>
+</RelativeLayout>
