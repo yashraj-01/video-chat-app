@@ -17,6 +17,18 @@ import io.agora.rtc.video.VideoEncoderConfiguration;
 
 public class CallActivity extends AppCompatActivity {
 
+    public void onCallClicked(View view){
+
+    }
+
+    public void onSwitchCameraClicked(View view){
+
+    }
+
+    public void onLocalAudioMuteClicked(View view){
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

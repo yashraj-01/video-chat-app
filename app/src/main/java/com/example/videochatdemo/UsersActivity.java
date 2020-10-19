@@ -48,13 +48,13 @@ public class UsersActivity extends AppCompatActivity {
     private boolean checkPermissionForCameraAndMicrophone() {
         int resultCamera = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         int resultMic = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO);
-        int resultStorage = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         int resultPhone = ContextCompat.checkSelfPermission(this,Manifest.permission.READ_PHONE_STATE);
-        return (resultCamera == PackageManager.PERMISSION_GRANTED) && (resultMic == PackageManager.PERMISSION_GRANTED) && (resultStorage == PackageManager.PERMISSION_GRANTED) && (resultPhone == PackageManager.PERMISSION_GRANTED);
+
+        return (resultCamera == PackageManager.PERMISSION_GRANTED) && (resultMic == PackageManager.PERMISSION_GRANTED) && (resultPhone == PackageManager.PERMISSION_GRANTED);
     }
 
     private void requestPermissionForCameraAndMicrophone() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE}, PERMISSION_REQ_ID);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.READ_PHONE_STATE}, PERMISSION_REQ_ID);
     }
 
     @Override
@@ -107,20 +107,28 @@ public class UsersActivity extends AppCompatActivity {
         createRoomFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ACTION = "CREATE";
-                Intent intent = new Intent(UsersActivity.this, RoomActivity.class);
-                intent.putExtra("ACTION", ACTION);
-                startActivity(intent);
+                if (!checkPermissionForCameraAndMicrophone()){
+                    requestPermissionForCameraAndMicrophone();
+                } else{
+                    ACTION = "CREATE";
+                    Intent intent = new Intent(UsersActivity.this, RoomActivity.class);
+                    intent.putExtra("ACTION", ACTION);
+                    startActivity(intent);
+                }
             }
         });
 
         joinRoomFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ACTION = "JOIN";
-                Intent intent = new Intent(UsersActivity.this, RoomActivity.class);
-                intent.putExtra("ACTION", ACTION);
-                startActivity(intent);
+                if (!checkPermissionForCameraAndMicrophone()){
+                    requestPermissionForCameraAndMicrophone();
+                } else{
+                    ACTION = "JOIN";
+                    Intent intent = new Intent(UsersActivity.this, RoomActivity.class);
+                    intent.putExtra("ACTION", ACTION);
+                    startActivity(intent);
+                }
             }
         });
 

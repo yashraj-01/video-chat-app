@@ -1,14 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CreateRoomFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Long press to select the user to send invitation and then create room"
+        android:layout_margin="10dp"/>
+
+    <ListView
+        android:id="@+id/users"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Crate Room Fragment" />
+        android:layout_below="@+id/textView"
+        android:layout_marginTop="10dp"
+        android:layout_above="@+id/createRoom" />
 
-</FrameLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/createRoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create room"
+        android:textAllCaps="false"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginVertical="40dp"/>
+
+</RelativeLayout>
